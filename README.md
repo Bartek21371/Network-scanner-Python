@@ -1,2 +1,1 @@
-Simple Network scanner
-Shows: Active IP's and Open Ports
+Simple Network scanner<br>Shows: Active IP's and Open Ports
