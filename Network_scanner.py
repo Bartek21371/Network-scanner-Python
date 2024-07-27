@@ -1,5 +1,5 @@
 import socket
-from ipaddress import ip_network
+from ipaddress import ip_network, AddressValueError
 from threading import Thread, Lock
 
 # Function for scanning range of IP addresses and finding active devices
@@ -8,14 +8,18 @@ def scan_ip_range(network):
     threads = []
     lock = Lock()  # Lock to manage access to shared list
 
-    for ip in ip_network(network).hosts():
-        t = Thread(target=check_ip, args=(str(ip), active_ips, lock))
-        threads.append(t)
-        t.start()
+    try:
+        for ip in ip_network(network).hosts():
+            t = Thread(target=check_ip, args=(str(ip), active_ips, lock))
+            threads.append(t)
+            t.start()
 
-    for t in threads:
-        t.join()
+        for t in threads:
+            t.join()
 
+    except ValueError as e:
+        print(f"Invalid network address: {e}")
+    
     return active_ips
 
 def check_ip(ip, active_ips, lock):
@@ -67,3 +71,4 @@ if __name__ == "__main__":
     network = input("Input network to scan (In CIDR format example>192.168.1.0/24): ")
     port_range = range(20, 1025)
     main(network, port_range)
+   
